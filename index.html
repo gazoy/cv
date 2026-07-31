@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gareth Oyston — Trader, Researcher, Educator, Developer</title>
+<meta name="description" content="Gareth Oyston — Freelance Trader, Researcher, Educator &amp; Developer. Technical analysis, Elliott Wave &amp; Gann analysis. PhD candidate researching AI applied to UAV swarms.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-void:      #0a0a0d;
+    --bg-panel:     #131318;
+    --bg-panel-2:   #17171d;
+    --line:         rgba(255,176,32,0.10);
+    --line-strong:  rgba(255,176,32,0.22);
+    --accent:       #ffb020;
+    --accent-dim:   #cf8f19;
+    --accent-glow:  rgba(255,176,32,0.35);
+    --text-primary: #ebe8e2;
+    --text-dim:     #8c8c95;
+    --text-faint:   #55555e;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body:    'Inter', sans-serif;
+    --font-mono:    'IBM Plex Mono', monospace;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:var(--bg-void);
+    color:var(--text-primary);
+    font-family:var(--font-body);
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+
+  ::selection{ background:var(--accent); color:#0a0a0d; }
+
+  a{ color:inherit; }
+
+  /* ---------- background grid (Gann-angle texture) ---------- */
+  .gann-field{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    background-image:
+      repeating-linear-gradient(45deg, var(--line) 0px, var(--line) 1px, transparent 1px, transparent 64px),
+      repeating-linear-gradient(-63.75deg, transparent 0px, transparent 95px, var(--line) 96px);
+    opacity:0.5;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 0%, transparent 75%);
+  }
+
+  section, header, footer{ position:relative; z-index:1; }
+
+  .wrap{
+    max-width:960px;
+    margin:0 auto;
+    padding:0 32px;
+  }
+
+  /* ---------- eyebrow / mono labels ---------- */
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--accent);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .eyebrow::before{
+    content:'';
+    width:22px; height:1px;
+    background:var(--accent-dim);
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100svh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding-top:80px;
+    padding-bottom:60px;
+  }
+
+  .hero-inner{
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+    gap:40px;
+    align-items:center;
+  }
+
+  .hero h1{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(44px, 7vw, 84px);
+    line-height:0.98;
+    letter-spacing:-0.02em;
+    opacity:0;
+    animation:rise 0.9s cubic-bezier(.16,1,.3,1) 0.15s forwards;
+  }
+  .hero h1 span{
+    display:block;
+    color:var(--accent);
+  }
+
+  .hero-role{
+    font-family:var(--font-mono);
+    font-size:16px;
+    color:var(--text-dim);
+    margin-top:22px;
+    max-width:480px;
+    opacity:0;
+    animation:rise 0.9s cubic-bezier(.16,1,.3,1) 0.35s forwards;
+  }
+  .hero-role .pipe{ color:var(--accent-dim); margin:0 8px; }
+
+  .hero-links{
+    margin-top:34px;
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    opacity:0;
+    animation:rise 0.9s cubic-bezier(.16,1,.3,1) 0.5s forwards;
+  }
+  .btn{
+    font-family:var(--font-mono);
+    font-size:13px;
+    letter-spacing:0.04em;
+    padding:11px 20px;
+    border:1px solid var(--line-strong);
+    border-radius:2px;
+    text-decoration:none;
+    color:var(--text-primary);
+    transition:border-color .2s ease, color .2s ease, background .2s ease;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+  }
+  .btn:hover{ border-color:var(--accent); color:var(--accent); background:rgba(255,176,32,0.05); }
+  .btn.primary{
+    background:var(--accent);
+    color:#0a0a0d;
+    border-color:var(--accent);
+    font-weight:600;
+  }
+  .btn.primary:hover{ background:var(--accent-dim); border-color:var(--accent-dim); color:#0a0a0d; }
+
+  /* ---------- wave-to-swarm signature svg ---------- */
+  .wave-stage{
+    position:relative;
+    height:340px;
+    opacity:0;
+    animation:fadeIn 1s ease 0.7s forwards;
+  }
+  .wave-stage svg{ width:100%; height:100%; overflow:visible; }
+
+  .wave-path{
+    fill:none;
+    stroke:var(--accent);
+    stroke-width:2.5;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    filter:drop-shadow(0 0 6px var(--accent-glow));
+  }
+
+  .wave-node{
+    fill:var(--bg-void);
+    stroke:var(--accent);
+    stroke-width:2;
+  }
+  .wave-node.drift{
+    animation:drift 6s ease-in-out infinite;
+  }
+  .wave-label{
+    font-family:var(--font-mono);
+    font-size:11px;
+    fill:var(--text-dim);
+  }
+
+  @keyframes rise{
+    from{ opacity:0; transform:translateY(16px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+  @keyframes fadeIn{
+    from{ opacity:0; }
+    to{ opacity:1; }
+  }
+  @keyframes drift{
+    0%,100%{ transform:translate(0,0); }
+    25%{ transform:translate(3px,-5px); }
+    50%{ transform:translate(-4px,2px); }
+    75%{ transform:translate(2px,4px); }
+  }
+
+  .scroll-cue{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--text-faint);
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    text-align:center;
+    margin-top:40px;
+    animation:pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{opacity:.4;} 50%{opacity:1;} }
+
+  /* ---------- section shell ---------- */
+  section.block{
+    padding:110px 0;
+    border-top:1px solid var(--line);
+  }
+
+  .reveal{
+    opacity:0;
+    transform:translateY(28px);
+    transition:opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1);
+  }
+  .reveal.is-visible{ opacity:1; transform:translateY(0); }
+
+  h2.section-title{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(28px, 4vw, 40px);
+    letter-spacing:-0.01em;
+    margin-bottom:20px;
+  }
+
+  .lede{
+    font-size:17px;
+    color:var(--text-dim);
+    max-width:640px;
+  }
+  .lede strong{ color:var(--text-primary); font-weight:500; }
+
+  /* ---------- focus cards ---------- */
+  .cards{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:1px;
+    background:var(--line);
+    margin-top:52px;
+    border:1px solid var(--line);
+  }
+  .card{
+    background:var(--bg-panel);
+    padding:34px 28px;
+    transition:background .3s ease;
+  }
+  .card:hover{ background:var(--bg-panel-2); }
+  .card .num{
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--accent-dim);
+    margin-bottom:22px;
+  }
+  .card h3{
+    font-family:var(--font-display);
+    font-size:20px;
+    font-weight:600;
+    margin-bottom:12px;
+  }
+  .card p{
+    font-size:14.5px;
+    color:var(--text-dim);
+  }
+  .card ul{
+    list-style:none;
+    margin-top:16px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .card li{
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    color:var(--text-primary);
+    padding-left:16px;
+    position:relative;
+  }
+  .card li::before{
+    content:'—';
+    position:absolute; left:0;
+    color:var(--accent-dim);
+  }
+
+  /* ---------- education timeline ---------- */
+  .timeline{
+    margin-top:52px;
+    display:flex;
+    flex-direction:column;
+  }
+  .tl-item{
+    display:grid;
+    grid-template-columns:150px 1fr;
+    gap:24px;
+    padding:26px 0;
+    border-top:1px solid var(--line);
+  }
+  .tl-item:last-child{ border-bottom:1px solid var(--line); }
+  .tl-date{
+    font-family:var(--font-mono);
+    font-size:13px;
+    color:var(--accent);
+    padding-top:2px;
+  }
+  .tl-body h3{
+    font-family:var(--font-display);
+    font-size:19px;
+    font-weight:600;
+    margin-bottom:6px;
+  }
+  .tl-body .place{
+    font-size:14px;
+    color:var(--text-dim);
+    margin-bottom:8px;
+  }
+  .tl-body .desc{
+    font-size:14px;
+    color:var(--text-dim);
+  }
+  .placeholder{
+    color:var(--text-faint);
+    font-style:italic;
+  }
+
+  /* ---------- skills ticker ---------- */
+  .ticker-wrap{
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    background:var(--bg-panel);
+    overflow:hidden;
+    padding:26px 0;
+    white-space:nowrap;
+  }
+  .ticker-track{
+    display:inline-flex;
+    gap:48px;
+    animation:scroll-ticker 26s linear infinite;
+  }
+  .ticker-wrap:hover .ticker-track{ animation-play-state:paused; }
+  .ticker-item{
+    font-family:var(--font-mono);
+    font-size:14px;
+    letter-spacing:0.03em;
+    color:var(--text-dim);
+    display:inline-flex;
+    align-items:center;
+    gap:12px;
+  }
+  .ticker-item b{ color:var(--accent); font-weight:600; }
+  .ticker-item .dot{ color:var(--text-faint); }
+
+  @keyframes scroll-ticker{
+    from{ transform:translateX(0); }
+    to{ transform:translateX(-50%); }
+  }
+
+  /* ---------- contact / footer ---------- */
+  footer{
+    padding:110px 0 60px;
+    border-top:1px solid var(--line);
+  }
+  footer h2{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(32px, 6vw, 56px);
+    letter-spacing:-0.02em;
+    max-width:640px;
+  }
+  footer h2 span{ color:var(--accent); }
+
+  .contact-grid{
+    margin-top:44px;
+    display:flex;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+
+  .foot-meta{
+    margin-top:90px;
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:12px;
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--text-faint);
+    letter-spacing:0.04em;
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width:860px){
+    .hero-inner{ grid-template-columns:1fr; gap:10px; }
+    .wave-stage{ height:220px; order:-1; }
+    .cards{ grid-template-columns:1fr; }
+    .tl-item{ grid-template-columns:1fr; gap:6px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; }
+  }
+
+  :focus-visible{
+    outline:2px solid var(--accent);
+    outline-offset:3px;
+  }
+</style>
+</head>
+<body>
+
+<div class="gann-field" aria-hidden="true"></div>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="wrap hero-inner">
+    <div>
+      <p class="eyebrow">Curriculum Vitae</p>
+      <h1>GARETH<span>OYSTON</span></h1>
+      <p class="hero-role">Freelance Trader<span class="pipe">·</span>Researcher<span class="pipe">·</span>Educator<span class="pipe">·</span>Developer</p>
+      <div class="hero-links">
+        <a class="btn primary" href="mailto:gaz@garethoyston.com">gaz@garethoyston.com</a>
+      </div>
+    </div>
+
+    <div class="wave-stage" aria-hidden="true">
+      <svg viewBox="0 0 420 340" preserveAspectRatio="xMidYMid meet">
+        <!-- Elliott 5-wave impulse path, animated draw-on -->
+        <path class="wave-path" id="wavePath"
+          d="M 10 260 L 80 120 L 140 190 L 220 40 L 280 130 L 380 20" />
+        <!-- wave point labels -->
+        <text class="wave-label" x="4"  y="278">0</text>
+        <text class="wave-label" x="74" y="112">1</text>
+        <text class="wave-label" x="134" y="208">2</text>
+        <text class="wave-label" x="214" y="32">3</text>
+        <text class="wave-label" x="274" y="148">4</text>
+        <text class="wave-label" x="368" y="12">5</text>
+
+        <!-- nodes that "release" into a drifting swarm after the wave draws -->
+        <g id="swarmNodes">
+          <circle class="wave-node" cx="80"  cy="120" r="4.5"/>
+          <circle class="wave-node" cx="140" cy="190" r="4.5"/>
+          <circle class="wave-node" cx="220" cy="40"  r="4.5"/>
+          <circle class="wave-node" cx="280" cy="130" r="4.5"/>
+          <circle class="wave-node" cx="380" cy="20"  r="4.5"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <p class="scroll-cue">Scroll ↓</p>
+</header>
+
+<!-- ============ ABOUT ============ -->
+<section class="block">
+  <div class="wrap reveal">
+    <p class="eyebrow">01 — Profile</p>
+    <h2 class="section-title">Reading markets and machines with the same discipline.</h2>
+    <p class="lede">
+      I'm a freelance trader and researcher working at the intersection of
+      <strong>classical market analysis</strong> and <strong>applied AI</strong>.
+      My trading practice is built on traditional technical analysis, Elliott Wave theory,
+      and Gann analysis — pattern-based methods for reading structure and timing in price.
+      Alongside this, I'm a current PhD candidate in Computer Science, researching
+      <strong>artificial intelligence applied to UAV swarms</strong>, and I teach Physics —
+      bringing the same instinct for structure, cycles, and systems into the classroom.
+    </p>
+  </div>
+</section>
+
+<!-- ============ FOCUS AREAS ============ -->
+<section class="block">
+  <div class="wrap reveal">
+    <p class="eyebrow">02 — Focus Areas</p>
+    <h2 class="section-title">Four disciplines, one way of thinking.</h2>
+
+    <div class="cards">
+      <div class="card">
+        <p class="num">TRADING</p>
+        <h3>Market Analysis</h3>
+        <p>Freelance trading built on classical, pattern-based methods rather than black-box signals.</p>
+        <ul>
+          <li>Traditional Technical Analysis</li>
+          <li>Elliott Wave Theory</li>
+          <li>Gann Analysis</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p class="num">RESEARCH</p>
+        <h3>Applied AI</h3>
+        <p>PhD research applying artificial intelligence to coordination and behavior in UAV swarms.</p>
+        <ul>
+          <li>PhD, Computer Science <span class="placeholder">(in progress)</span></li>
+          <li>Topic: AI Applied to UAV Swarms</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p class="num">EDUCATION</p>
+        <h3>Teaching</h3>
+        <p>Teaching Physics — translating rigorous, systems-level thinking for students.</p>
+        <ul>
+          <li>Physics Educator</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p class="num">DEVELOPMENT</p>
+        <h3>Software Engineering</h3>
+        <p>Designing and building complete web applications end to end — from backend logic and data to a finished, working interface.</p>
+        <ul>
+          <li>Full Web Application Development</li>
+          <li>Python &amp; Database-Backed Systems</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EDUCATION TIMELINE ============ -->
+<section class="block">
+  <div class="wrap reveal">
+    <p class="eyebrow">03 — Education</p>
+    <h2 class="section-title">Academic background.</h2>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-date">In progress</div>
+        <div class="tl-body">
+          <h3>PhD, Computer Science</h3>
+          <p class="desc">Artificial Intelligence applied to UAV Swarms.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2019</div>
+        <div class="tl-body">
+          <h3>PGCE, Secondary Education</h3>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2016</div>
+        <div class="tl-body">
+          <h3>MSc, Electrical Engineering</h3>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2015</div>
+        <div class="tl-body">
+          <h3>BEng (Hons), Electrical Engineering</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SKILLS TICKER ============ -->
+<section class="ticker-wrap" aria-label="Skills">
+  <div class="ticker-track" id="tickerTrack">
+    <!-- populated twice via JS for seamless loop -->
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<footer>
+  <div class="wrap reveal">
+    <p class="eyebrow">04 — Contact</p>
+    <h2>Let's talk markets, <span>AI</span>, or teaching.</h2>
+    <div class="contact-grid">
+      <a class="btn primary" href="mailto:gaz@garethoyston.com">gaz@garethoyston.com</a>
+    </div>
+
+    <div class="foot-meta">
+      <span>Gareth Oyston — Trader / Researcher / Educator / Developer</span>
+      <span id="year"></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---- footer year ----
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // ---- draw-on animation for the Elliott Wave path ----
+  (function(){
+    var path = document.getElementById('wavePath');
+    var len = path.getTotalLength();
+    path.style.strokeDasharray = len;
+    path.style.strokeDashoffset = len;
+    // force reflow then animate
+    path.getBoundingClientRect();
+    path.style.transition = 'stroke-dashoffset 1.8s cubic-bezier(.16,1,.3,1) 0.4s';
+    requestAnimationFrame(function(){ path.style.strokeDashoffset = '0'; });
+
+    // release swarm drift on nodes once the wave has drawn
+    var nodes = document.querySelectorAll('#swarmNodes circle');
+    nodes.forEach(function(n, i){
+      setTimeout(function(){
+        n.classList.add('drift');
+        n.style.animationDelay = (i * 0.4) + 's';
+      }, 2200 + i * 120);
+    });
+  })();
+
+  // ---- scroll reveal ----
+  var revealEls = document.querySelectorAll('.reveal');
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (entry.isIntersecting){
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(function(el){ io.observe(el); });
+
+  // ---- skills ticker content (duplicated for seamless loop) ----
+  var skills = ['PYTHON', 'PINESCRIPT', 'R', 'DATABASES', 'TECHNICAL ANALYSIS', 'ELLIOTT WAVE', 'GANN ANALYSIS'];
+  var track = document.getElementById('tickerTrack');
+  function buildTicker(){
+    var html = '';
+    for (var rep = 0; rep < 2; rep++){
+      skills.forEach(function(s){
+        html += '<span class="ticker-item"><b>' + s + '</b><span class="dot">///</span></span>';
+      });
+    }
+    track.innerHTML = html;
+  }
+  buildTicker();
+</script>
+
+</body>
+</html>
