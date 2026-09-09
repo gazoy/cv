@@ -1,656 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gareth Oyston — Trader, Researcher, Educator, Developer</title>
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
-<meta name="description" content="Gareth Oyston — Freelance Trader, Researcher, Educator &amp; Developer. Technical analysis, Elliott Wave &amp; Gann analysis. PhD candidate researching AI applied to UAV swarms.">
+<meta name="description" content="Gareth Oyston — freelance trader and researcher. Technical analysis, Elliott Wave and Gann analysis. PhD candidate researching AI applied to UAV swarms.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='5'%20fill='%2314181B'/%3E%3Cpath%20d='M5%2025L12%2012L16%2018L27%205'%20fill='none'%20stroke='%23F6F7F4'%20stroke-width='2.8'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg-void:      #0a0a0d;
-    --bg-panel:     #131318;
-    --bg-panel-2:   #17171d;
-    --line:         rgba(255,176,32,0.10);
-    --line-strong:  rgba(255,176,32,0.22);
-    --accent:       #ffb020;
-    --accent-dim:   #cf8f19;
-    --accent-glow:  rgba(255,176,32,0.35);
-    --text-primary: #ebe8e2;
-    --text-dim:     #8c8c95;
-    --text-faint:   #55555e;
-    --font-display: 'Space Grotesk', sans-serif;
-    --font-body:    'Inter', sans-serif;
-    --font-mono:    'IBM Plex Mono', monospace;
-  }
+:root{
+  --paper:#F6F7F4;
+  --ink:#14181B;
+  --ink-soft:#5B6469;
+  --rule:#D6DBD5;
+  --up:#1E6650;
+  --down:#9C3A2C;
+  --measure:66ch;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  margin:0;
+  background:
+    linear-gradient(var(--rule) 1px,transparent 1px) 0 0/100% 32px,
+    linear-gradient(90deg,var(--rule) 1px,transparent 1px) 0 0/32px 100%,
+    var(--paper);
+  background-attachment:fixed;
+  color:var(--ink);
+  font-family:"Space Grotesk",system-ui,sans-serif;
+  font-size:17px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+a{color:inherit}
+a:focus-visible,button:focus-visible{outline:2px solid var(--up);outline-offset:3px}
 
-  *{ margin:0; padding:0; box-sizing:border-box; }
+/* header */
+.bar{
+  position:sticky;top:0;z-index:10;
+  background:rgba(246,247,244,.92);
+  backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--rule);
+}
+.bar .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;height:52px}
+.bar b{font-weight:700;letter-spacing:-.01em}
+.bar a{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink-soft);text-decoration:none}
+.bar a:hover{color:var(--up)}
 
-  html{ scroll-behavior:smooth; }
+/* hero */
+.hero{padding:80px 0 64px;border-bottom:1px solid var(--rule)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:56px;align-items:end}
+h1{
+  font-size:clamp(3.4rem,10.5vw,7.4rem);
+  line-height:.86;
+  font-weight:700;
+  letter-spacing:-.045em;
+  margin:0 0 26px;
+}
+h1 span{display:block}
+.roles{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}
+.roles li{
+  display:flex;justify-content:space-between;gap:12px;
+  padding:9px 0;border-bottom:1px solid var(--rule);
+  font-family:"IBM Plex Mono",monospace;font-size:13px;
+}
+.roles span{color:var(--ink-soft)}
+figure{margin:0}
+figcaption{
+  font-family:"IBM Plex Mono",monospace;font-size:12px;
+  color:var(--ink-soft);margin-top:10px;
+}
+svg.chart{width:100%;height:auto;display:block}
+.path-main{
+  fill:none;stroke:var(--ink);stroke-width:2.5;
+  stroke-linejoin:round;stroke-linecap:round;
+  stroke-dasharray:1400;stroke-dashoffset:1400;
+  animation:draw 2.2s cubic-bezier(.5,0,.2,1) .3s forwards;
+}
+.pt{opacity:0;animation:fade .5s ease forwards}
+.lbl{font-family:"IBM Plex Mono",monospace;font-size:11px;fill:var(--ink-soft)}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes fade{to{opacity:1}}
+@media (prefers-reduced-motion:reduce){
+  .path-main{animation:none;stroke-dashoffset:0}
+  .pt{animation:none;opacity:1}
+}
 
-  body{
-    background:var(--bg-void);
-    color:var(--text-primary);
-    font-family:var(--font-body);
-    line-height:1.6;
-    overflow-x:hidden;
-  }
+/* sections */
+section{padding:72px 0;border-bottom:1px solid var(--rule)}
+.head{
+  display:grid;grid-template-columns:120px minmax(0,1fr);gap:32px;margin-bottom:34px;
+}
+.head p{
+  font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-soft);
+  margin:9px 0 0;
+}
+h2{
+  font-size:clamp(1.6rem,3.6vw,2.5rem);line-height:1.12;
+  letter-spacing:-.03em;font-weight:700;margin:0;max-width:20ch;
+}
+.prose{grid-column:2;max-width:var(--measure);font-size:1.06rem}
+.prose p{margin:0 0 1em}
+.prose strong{font-weight:500;box-shadow:inset 0 -.42em 0 rgba(30,102,80,.16)}
 
-  ::selection{ background:var(--accent); color:#0a0a0d; }
+/* focus rows */
+.rows{border-top:1px solid var(--ink)}
+.row{
+  display:grid;grid-template-columns:120px minmax(0,1.1fr) minmax(0,1fr);
+  gap:32px;padding:26px 0;border-bottom:1px solid var(--rule);align-items:baseline;
+}
+.row h3{margin:0;font-size:1.18rem;letter-spacing:-.02em;font-weight:700}
+.row .k{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-soft)}
+.row p{margin:.4em 0 0;color:var(--ink-soft);font-size:.97rem;max-width:44ch}
+.row ul{margin:0;padding:0;list-style:none;font-family:"IBM Plex Mono",monospace;font-size:12.5px}
+.row ul li{padding:3px 0;color:var(--ink-soft)}
+.row ul li::before{content:"— ";color:var(--up)}
 
-  a{ color:inherit; }
+/* education */
+.edu{border-top:1px solid var(--ink)}
+.edu-item{
+  display:grid;grid-template-columns:120px minmax(0,1fr);gap:32px;
+  padding:20px 0;border-bottom:1px solid var(--rule);
+}
+.edu-item .yr{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-soft)}
+.edu-item h3{margin:0;font-size:1.1rem;font-weight:500;letter-spacing:-.015em}
+.edu-item em{display:block;font-style:normal;color:var(--ink-soft);font-size:.95rem;margin-top:3px}
+.edu-item.now .yr{color:var(--up)}
 
-  /* ---------- background grid (Gann-angle texture) ---------- */
-  .gann-field{
-    position:fixed;
-    inset:0;
-    z-index:0;
-    pointer-events:none;
-    background-image:
-      repeating-linear-gradient(45deg, var(--line) 0px, var(--line) 1px, transparent 1px, transparent 64px),
-      repeating-linear-gradient(-63.75deg, transparent 0px, transparent 95px, var(--line) 96px);
-    opacity:0.5;
-    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 0%, transparent 75%);
-  }
+/* contact */
+.contact{padding:78px 0 64px;border:0}
+.mail{
+  display:inline-block;font-size:clamp(1.5rem,5.2vw,3rem);
+  font-weight:700;letter-spacing:-.035em;text-decoration:none;
+  border-bottom:3px solid var(--rule);padding-bottom:4px;transition:border-color .18s;
+}
+.mail:hover{border-color:var(--up)}
+footer{border-top:1px solid var(--rule);padding:20px 0 40px}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-soft)}
 
-  section, header, footer{ position:relative; z-index:1; }
-
-  .wrap{
-    max-width:960px;
-    margin:0 auto;
-    padding:0 32px;
-  }
-
-  /* ---------- eyebrow / mono labels ---------- */
-  .eyebrow{
-    font-family:var(--font-mono);
-    font-size:12.5px;
-    letter-spacing:0.18em;
-    text-transform:uppercase;
-    color:var(--accent);
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-bottom:18px;
-  }
-  .eyebrow::before{
-    content:'';
-    width:22px; height:1px;
-    background:var(--accent-dim);
-  }
-
-  /* ---------- HERO ---------- */
-  .hero{
-    min-height:100svh;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    padding-top:80px;
-    padding-bottom:60px;
-  }
-
-  .hero-inner{
-    display:grid;
-    grid-template-columns:1.1fr 0.9fr;
-    gap:40px;
-    align-items:center;
-  }
-
-  .hero h1{
-    font-family:var(--font-display);
-    font-weight:700;
-    font-size:clamp(44px, 7vw, 84px);
-    line-height:0.98;
-    letter-spacing:-0.02em;
-    opacity:0;
-    animation:rise 0.9s cubic-bezier(.16,1,.3,1) 0.15s forwards;
-  }
-  .hero h1 span{
-    display:block;
-    color:var(--accent);
-  }
-
-  .hero-role{
-    font-family:var(--font-mono);
-    font-size:16px;
-    color:var(--text-dim);
-    margin-top:22px;
-    max-width:480px;
-    opacity:0;
-    animation:rise 0.9s cubic-bezier(.16,1,.3,1) 0.35s forwards;
-  }
-  .hero-role .pipe{ color:var(--accent-dim); margin:0 8px; }
-
-  .hero-links{
-    margin-top:34px;
-    display:flex;
-    gap:14px;
-    flex-wrap:wrap;
-    opacity:0;
-    animation:rise 0.9s cubic-bezier(.16,1,.3,1) 0.5s forwards;
-  }
-  .btn{
-    font-family:var(--font-mono);
-    font-size:13px;
-    letter-spacing:0.04em;
-    padding:11px 20px;
-    border:1px solid var(--line-strong);
-    border-radius:2px;
-    text-decoration:none;
-    color:var(--text-primary);
-    transition:border-color .2s ease, color .2s ease, background .2s ease;
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-  }
-  .btn:hover{ border-color:var(--accent); color:var(--accent); background:rgba(255,176,32,0.05); }
-  .btn.primary{
-    background:var(--accent);
-    color:#0a0a0d;
-    border-color:var(--accent);
-    font-weight:600;
-  }
-  .btn.primary:hover{ background:var(--accent-dim); border-color:var(--accent-dim); color:#0a0a0d; }
-
-  /* ---------- wave-to-swarm signature svg ---------- */
-  .wave-stage{
-    position:relative;
-    height:340px;
-    opacity:0;
-    animation:fadeIn 1s ease 0.7s forwards;
-  }
-  .wave-stage svg{ width:100%; height:100%; overflow:visible; }
-
-  .wave-path{
-    fill:none;
-    stroke:var(--accent);
-    stroke-width:2.5;
-    stroke-linecap:round;
-    stroke-linejoin:round;
-    filter:drop-shadow(0 0 6px var(--accent-glow));
-  }
-
-  .wave-node{
-    fill:var(--bg-void);
-    stroke:var(--accent);
-    stroke-width:2;
-  }
-  .wave-node.drift{
-    animation:drift 6s ease-in-out infinite;
-  }
-  .wave-label{
-    font-family:var(--font-mono);
-    font-size:11px;
-    fill:var(--text-dim);
-  }
-
-  @keyframes rise{
-    from{ opacity:0; transform:translateY(16px); }
-    to{ opacity:1; transform:translateY(0); }
-  }
-  @keyframes fadeIn{
-    from{ opacity:0; }
-    to{ opacity:1; }
-  }
-  @keyframes drift{
-    0%,100%{ transform:translate(0,0); }
-    25%{ transform:translate(3px,-5px); }
-    50%{ transform:translate(-4px,2px); }
-    75%{ transform:translate(2px,4px); }
-  }
-
-  .scroll-cue{
-    font-family:var(--font-mono);
-    font-size:11px;
-    color:var(--text-faint);
-    letter-spacing:0.12em;
-    text-transform:uppercase;
-    text-align:center;
-    margin-top:40px;
-    animation:pulse 2.4s ease-in-out infinite;
-  }
-  @keyframes pulse{ 0%,100%{opacity:.4;} 50%{opacity:1;} }
-
-  /* ---------- section shell ---------- */
-  section.block{
-    padding:110px 0;
-    border-top:1px solid var(--line);
-  }
-
-  .reveal{
-    opacity:0;
-    transform:translateY(28px);
-    transition:opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1);
-  }
-  .reveal.is-visible{ opacity:1; transform:translateY(0); }
-
-  h2.section-title{
-    font-family:var(--font-display);
-    font-weight:600;
-    font-size:clamp(28px, 4vw, 40px);
-    letter-spacing:-0.01em;
-    margin-bottom:20px;
-  }
-
-  .lede{
-    font-size:17px;
-    color:var(--text-dim);
-    max-width:640px;
-  }
-  .lede strong{ color:var(--text-primary); font-weight:500; }
-
-  /* ---------- focus cards ---------- */
-  .cards{
-    display:grid;
-    grid-template-columns:repeat(2, 1fr);
-    gap:1px;
-    background:var(--line);
-    margin-top:52px;
-    border:1px solid var(--line);
-  }
-  .card{
-    background:var(--bg-panel);
-    padding:34px 28px;
-    transition:background .3s ease;
-  }
-  .card:hover{ background:var(--bg-panel-2); }
-  .card .num{
-    font-family:var(--font-mono);
-    font-size:12px;
-    color:var(--accent-dim);
-    margin-bottom:22px;
-  }
-  .card h3{
-    font-family:var(--font-display);
-    font-size:20px;
-    font-weight:600;
-    margin-bottom:12px;
-  }
-  .card p{
-    font-size:14.5px;
-    color:var(--text-dim);
-  }
-  .card ul{
-    list-style:none;
-    margin-top:16px;
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-  }
-  .card li{
-    font-family:var(--font-mono);
-    font-size:12.5px;
-    color:var(--text-primary);
-    padding-left:16px;
-    position:relative;
-  }
-  .card li::before{
-    content:'—';
-    position:absolute; left:0;
-    color:var(--accent-dim);
-  }
-
-  /* ---------- education timeline ---------- */
-  .timeline{
-    margin-top:52px;
-    display:flex;
-    flex-direction:column;
-  }
-  .tl-item{
-    display:grid;
-    grid-template-columns:150px 1fr;
-    gap:24px;
-    padding:26px 0;
-    border-top:1px solid var(--line);
-  }
-  .tl-item:last-child{ border-bottom:1px solid var(--line); }
-  .tl-date{
-    font-family:var(--font-mono);
-    font-size:13px;
-    color:var(--accent);
-    padding-top:2px;
-  }
-  .tl-body h3{
-    font-family:var(--font-display);
-    font-size:19px;
-    font-weight:600;
-    margin-bottom:6px;
-  }
-  .tl-body .place{
-    font-size:14px;
-    color:var(--text-dim);
-    margin-bottom:8px;
-  }
-  .tl-body .desc{
-    font-size:14px;
-    color:var(--text-dim);
-  }
-  .placeholder{
-    color:var(--text-faint);
-    font-style:italic;
-  }
-
-  /* ---------- skills ticker ---------- */
-  .ticker-wrap{
-    border-top:1px solid var(--line);
-    border-bottom:1px solid var(--line);
-    background:var(--bg-panel);
-    overflow:hidden;
-    padding:26px 0;
-    white-space:nowrap;
-  }
-  .ticker-track{
-    display:inline-flex;
-    gap:48px;
-    animation:scroll-ticker 26s linear infinite;
-  }
-  .ticker-wrap:hover .ticker-track{ animation-play-state:paused; }
-  .ticker-item{
-    font-family:var(--font-mono);
-    font-size:14px;
-    letter-spacing:0.03em;
-    color:var(--text-dim);
-    display:inline-flex;
-    align-items:center;
-    gap:12px;
-  }
-  .ticker-item b{ color:var(--accent); font-weight:600; }
-  .ticker-item .dot{ color:var(--text-faint); }
-
-  @keyframes scroll-ticker{
-    from{ transform:translateX(0); }
-    to{ transform:translateX(-50%); }
-  }
-
-  /* ---------- contact / footer ---------- */
-  footer{
-    padding:110px 0 60px;
-    border-top:1px solid var(--line);
-  }
-  footer h2{
-    font-family:var(--font-display);
-    font-weight:700;
-    font-size:clamp(32px, 6vw, 56px);
-    letter-spacing:-0.02em;
-    max-width:640px;
-  }
-  footer h2 span{ color:var(--accent); }
-
-  .contact-grid{
-    margin-top:44px;
-    display:flex;
-    gap:16px;
-    flex-wrap:wrap;
-  }
-
-  .foot-meta{
-    margin-top:90px;
-    display:flex;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    gap:12px;
-    font-family:var(--font-mono);
-    font-size:12px;
-    color:var(--text-faint);
-    letter-spacing:0.04em;
-  }
-
-  /* ---------- responsive ---------- */
-  @media (max-width:860px){
-    .hero-inner{ grid-template-columns:1fr; gap:10px; }
-    .wave-stage{ height:220px; order:-1; }
-    .cards{ grid-template-columns:1fr; }
-    .tl-item{ grid-template-columns:1fr; gap:6px; }
-  }
-
-  @media (prefers-reduced-motion: reduce){
-    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; }
-  }
-
-  :focus-visible{
-    outline:2px solid var(--accent);
-    outline-offset:3px;
-  }
+@media(max-width:860px){
+  .hero-grid{grid-template-columns:1fr;gap:40px}
+  .head,.row,.edu-item{grid-template-columns:1fr;gap:10px}
+  .prose{grid-column:1}
+  .row ul{margin-top:8px}
+  section{padding:56px 0}
+}
 </style>
 </head>
 <body>
 
-<div class="gann-field" aria-hidden="true"></div>
+<div class="bar"><div class="wrap">
+  <b>Gareth Oyston</b>
+  <a href="mailto:gaz@garethoyston.com">gaz@garethoyston.com</a>
+</div></div>
 
-<!-- ============ HERO ============ -->
-<header class="hero">
-  <div class="wrap hero-inner">
-    <div>
-      <p class="eyebrow">Curriculum Vitae</p>
-      <h1>GARETH<span>OYSTON</span></h1>
-      <p class="hero-role">Freelance Trader<span class="pipe">·</span>Researcher<span class="pipe">·</span>Educator<span class="pipe">·</span>Developer</p>
-      <div class="hero-links">
-        <a class="btn primary" href="mailto:gaz@garethoyston.com">gaz@garethoyston.com</a>
+<header class="hero"><div class="wrap hero-grid">
+  <div>
+    <h1><span>Gareth</span><span>Oyston</span></h1>
+    <ul class="roles">
+      <li>Trading <span>Elliott Wave &amp; Gann</span></li>
+      <li>Research <span>AI for UAV swarms</span></li>
+      <li>Teaching <span>Physics</span></li>
+      <li>Development <span>Python &amp; web apps</span></li>
+    </ul>
+  </div>
+  <figure>
+    <svg class="chart" viewBox="0 0 520 300" role="img" aria-label="A five-wave impulse pattern followed by an A-B-C correction.">
+      <path class="path-main" d="M20 268 L104 150 L146 202 L246 74 L292 128 L360 34 L418 118 L452 72 L500 148"/>
+      <g>
+        <circle class="pt" style="animation-delay:.7s" cx="104" cy="150" r="3.5" fill="#1E6650"/>
+        <circle class="pt" style="animation-delay:.95s" cx="146" cy="202" r="3.5" fill="#9C3A2C"/>
+        <circle class="pt" style="animation-delay:1.2s" cx="246" cy="74" r="3.5" fill="#1E6650"/>
+        <circle class="pt" style="animation-delay:1.45s" cx="292" cy="128" r="3.5" fill="#9C3A2C"/>
+        <circle class="pt" style="animation-delay:1.7s" cx="360" cy="34" r="3.5" fill="#1E6650"/>
+        <text class="lbl pt" style="animation-delay:.7s" x="104" y="140" text-anchor="middle">1</text>
+        <text class="lbl pt" style="animation-delay:.95s" x="146" y="220" text-anchor="middle">2</text>
+        <text class="lbl pt" style="animation-delay:1.2s" x="246" y="64" text-anchor="middle">3</text>
+        <text class="lbl pt" style="animation-delay:1.45s" x="292" y="146" text-anchor="middle">4</text>
+        <text class="lbl pt" style="animation-delay:1.7s" x="360" y="24" text-anchor="middle">5</text>
+        <text class="lbl pt" style="animation-delay:2s" x="418" y="136" text-anchor="middle">A</text>
+        <text class="lbl pt" style="animation-delay:2.1s" x="452" y="62" text-anchor="middle">B</text>
+        <text class="lbl pt" style="animation-delay:2.2s" x="500" y="166" text-anchor="middle">C</text>
+      </g>
+    </svg>
+    <figcaption>Impulse and correction — the shape underneath everything I work on.</figcaption>
+  </figure>
+</div></header>
+
+<main>
+  <section><div class="wrap">
+    <div class="head">
+      <p>Profile</p>
+      <h2>Reading markets and machines with the same discipline.</h2>
+      <div class="prose">
+        <p>I'm a freelance trader and researcher working at the intersection of <strong>classical market analysis</strong> and <strong>applied AI</strong>. My trading practice is built on traditional technical analysis, Elliott Wave theory and Gann analysis — pattern-based methods for reading structure and timing in price.</p>
+        <p>Alongside this, I'm a current PhD candidate in Computer Science researching artificial intelligence applied to UAV swarms, and I teach Physics — bringing the same instinct for structure, cycles and systems into the classroom.</p>
       </div>
     </div>
+  </div></section>
 
-    <div class="wave-stage" aria-hidden="true">
-      <svg viewBox="0 0 420 340" preserveAspectRatio="xMidYMid meet">
-        <!-- Elliott 5-wave impulse path, animated draw-on -->
-        <path class="wave-path" id="wavePath"
-          d="M 10 260 L 80 120 L 140 190 L 220 40 L 280 130 L 380 20" />
-        <!-- wave point labels -->
-        <text class="wave-label" x="4"  y="278">0</text>
-        <text class="wave-label" x="74" y="112">1</text>
-        <text class="wave-label" x="134" y="208">2</text>
-        <text class="wave-label" x="214" y="32">3</text>
-        <text class="wave-label" x="274" y="148">4</text>
-        <text class="wave-label" x="368" y="12">5</text>
-
-        <!-- nodes that "release" into a drifting swarm after the wave draws -->
-        <g id="swarmNodes">
-          <circle class="wave-node" cx="80"  cy="120" r="4.5"/>
-          <circle class="wave-node" cx="140" cy="190" r="4.5"/>
-          <circle class="wave-node" cx="220" cy="40"  r="4.5"/>
-          <circle class="wave-node" cx="280" cy="130" r="4.5"/>
-          <circle class="wave-node" cx="380" cy="20"  r="4.5"/>
-        </g>
-      </svg>
+  <section><div class="wrap">
+    <div class="head">
+      <p>Focus</p>
+      <h2>Four disciplines, one way of thinking.</h2>
     </div>
-  </div>
-
-  <p class="scroll-cue">Scroll ↓</p>
-</header>
-
-<!-- ============ ABOUT ============ -->
-<section class="block">
-  <div class="wrap reveal">
-    <p class="eyebrow">01 — Profile</p>
-    <h2 class="section-title">Reading markets and machines with the same discipline.</h2>
-    <p class="lede">
-      I'm a freelance trader and researcher working at the intersection of
-      <strong>classical market analysis</strong> and <strong>applied AI</strong>.
-      My trading practice is built on traditional technical analysis, Elliott Wave theory,
-      and Gann analysis — pattern-based methods for reading structure and timing in price.
-      Alongside this, I'm a current PhD candidate in Computer Science, researching
-      <strong>artificial intelligence applied to UAV swarms</strong>, and I teach Physics —
-      bringing the same instinct for structure, cycles, and systems into the classroom.
-    </p>
-  </div>
-</section>
-
-<!-- ============ FOCUS AREAS ============ -->
-<section class="block">
-  <div class="wrap reveal">
-    <p class="eyebrow">02 — Focus Areas</p>
-    <h2 class="section-title">Four disciplines, one way of thinking.</h2>
-
-    <div class="cards">
-      <div class="card">
-        <p class="num">TRADING</p>
-        <h3>Market Analysis</h3>
-        <p>Freelance trading built on classical, pattern-based methods rather than black-box signals.</p>
-        <ul>
-          <li>Traditional Technical Analysis</li>
-          <li>Elliott Wave Theory</li>
-          <li>Gann Analysis</li>
-        </ul>
+    <div class="rows">
+      <div class="row">
+        <div class="k">Trading</div>
+        <div><h3>Market analysis</h3><p>Freelance trading built on classical, pattern-based methods rather than black-box signals.</p></div>
+        <ul><li>Traditional technical analysis</li><li>Elliott Wave theory</li><li>Gann analysis</li></ul>
       </div>
-      <div class="card">
-        <p class="num">RESEARCH</p>
-        <h3>Applied AI</h3>
-        <p>PhD research applying artificial intelligence to coordination and behavior in UAV swarms.</p>
-        <ul>
-          <li>PhD, Computer Science <span class="placeholder">(in progress)</span></li>
-          <li>Topic: AI Applied to UAV Swarms</li>
-        </ul>
+      <div class="row">
+        <div class="k">Research</div>
+        <div><h3>Applied AI</h3><p>PhD research applying artificial intelligence to coordination and behaviour in UAV swarms.</p></div>
+        <ul><li>PhD, Computer Science (in progress)</li><li>AI applied to UAV swarms</li></ul>
       </div>
-      <div class="card">
-        <p class="num">EDUCATION</p>
-        <h3>Teaching</h3>
-        <p>Teaching Physics — translating rigorous, systems-level thinking for students.</p>
-        <ul>
-          <li>Physics Educator</li>
-        </ul>
+      <div class="row">
+        <div class="k">Education</div>
+        <div><h3>Teaching</h3><p>Teaching Physics — translating rigorous, systems-level thinking for students.</p></div>
+        <ul><li>Physics educator</li></ul>
       </div>
-      <div class="card">
-        <p class="num">DEVELOPMENT</p>
-        <h3>Software Engineering</h3>
-        <p>Designing and building complete web applications end to end — from backend logic and data to a finished, working interface.</p>
-        <ul>
-          <li>Full Web Application Development</li>
-          <li>Python &amp; Database-Backed Systems</li>
-        </ul>
+      <div class="row">
+        <div class="k">Development</div>
+        <div><h3>Software engineering</h3><p>Designing and building complete web applications end to end, from backend logic and data to a finished interface.</p></div>
+        <ul><li>Full web application development</li><li>Python &amp; database-backed systems</li></ul>
       </div>
     </div>
-  </div>
-</section>
+  </div></section>
 
-<!-- ============ EDUCATION TIMELINE ============ -->
-<section class="block">
-  <div class="wrap reveal">
-    <p class="eyebrow">03 — Education</p>
-    <h2 class="section-title">Academic background.</h2>
-
-    <div class="timeline">
-      <div class="tl-item">
-        <div class="tl-date">In progress</div>
-        <div class="tl-body">
-          <h3>PhD, Computer Science</h3>
-          <p class="desc">Artificial Intelligence applied to UAV Swarms.</p>
-        </div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-date">2019</div>
-        <div class="tl-body">
-          <h3>PGCE, Secondary Education</h3>
-        </div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-date">2016</div>
-        <div class="tl-body">
-          <h3>MSc, Electrical Engineering</h3>
-        </div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-date">2015</div>
-        <div class="tl-body">
-          <h3>BEng (Hons), Electrical Engineering</h3>
-        </div>
-      </div>
+  <section><div class="wrap">
+    <div class="head">
+      <p>Education</p>
+      <h2>Academic background.</h2>
     </div>
-  </div>
-</section>
-
-<!-- ============ SKILLS TICKER ============ -->
-<section class="ticker-wrap" aria-label="Skills">
-  <div class="ticker-track" id="tickerTrack">
-    <!-- populated twice via JS for seamless loop -->
-  </div>
-</section>
-
-<!-- ============ CONTACT ============ -->
-<footer>
-  <div class="wrap reveal">
-    <p class="eyebrow">04 — Contact</p>
-    <h2>Let's talk markets, <span>AI</span>, or teaching.</h2>
-    <div class="contact-grid">
-      <a class="btn primary" href="mailto:gaz@garethoyston.com">gaz@garethoyston.com</a>
+    <div class="edu">
+      <div class="edu-item now"><div class="yr">In progress</div><div><h3>PhD, Computer Science</h3><em>Artificial intelligence applied to UAV swarms</em></div></div>
+      <div class="edu-item"><div class="yr">2019</div><div><h3>PGCE, Secondary Education</h3></div></div>
+      <div class="edu-item"><div class="yr">2016</div><div><h3>MSc, Electrical Engineering</h3></div></div>
+      <div class="edu-item"><div class="yr">2015</div><div><h3>BEng (Hons), Electrical Engineering</h3></div></div>
     </div>
+  </div></section>
 
-    <div class="foot-meta">
-      <span>Gareth Oyston — Trader / Researcher / Educator / Developer</span>
-      <span id="year"></span>
+  <section class="contact"><div class="wrap">
+    <div class="head">
+      <p>Contact</p>
+      <h2>Let's talk markets, AI, or teaching.</h2>
     </div>
-  </div>
-</footer>
+    <a class="mail" href="mailto:gaz@garethoyston.com">gaz@garethoyston.com</a>
+  </div></section>
+</main>
 
-<script>
-  // ---- footer year ----
-  document.getElementById('year').textContent = new Date().getFullYear();
+<footer><div class="wrap">
+  <span>Gareth Oyston</span>
+  <span>Trader / Researcher / Educator / Developer</span>
+</div></footer>
 
-  // ---- draw-on animation for the Elliott Wave path ----
-  (function(){
-    var path = document.getElementById('wavePath');
-    var len = path.getTotalLength();
-    path.style.strokeDasharray = len;
-    path.style.strokeDashoffset = len;
-    // force reflow then animate
-    path.getBoundingClientRect();
-    path.style.transition = 'stroke-dashoffset 1.8s cubic-bezier(.16,1,.3,1) 0.4s';
-    requestAnimationFrame(function(){ path.style.strokeDashoffset = '0'; });
-
-    // release swarm drift on nodes once the wave has drawn
-    var nodes = document.querySelectorAll('#swarmNodes circle');
-    nodes.forEach(function(n, i){
-      setTimeout(function(){
-        n.classList.add('drift');
-        n.style.animationDelay = (i * 0.4) + 's';
-      }, 2200 + i * 120);
-    });
-  })();
-
-  // ---- scroll reveal ----
-  var revealEls = document.querySelectorAll('.reveal');
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(entry){
-      if (entry.isIntersecting){
-        entry.target.classList.add('is-visible');
-        io.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.15 });
-  revealEls.forEach(function(el){ io.observe(el); });
-
-  // ---- skills ticker content (duplicated for seamless loop) ----
-  var skills = ['PYTHON', 'PINESCRIPT', 'R', 'DATABASES', 'TECHNICAL ANALYSIS', 'ELLIOTT WAVE', 'GANN ANALYSIS'];
-  var track = document.getElementById('tickerTrack');
-  function buildTicker(){
-    var html = '';
-    for (var rep = 0; rep < 2; rep++){
-      skills.forEach(function(s){
-        html += '<span class="ticker-item"><b>' + s + '</b><span class="dot">///</span></span>';
-      });
-    }
-    track.innerHTML = html;
-  }
-  buildTicker();
-</script>
-  
-<!-- Default Statcounter code for My Online CV http://www.garethoyston.com --> 
-<script type="text/javascript">
-var sc_project=13340086; 
-var sc_invisible=1; 
-var sc_security="cea92861"; 
-</script>
-<script type="text/javascript"
-src="https://www.statcounter.com/counter/counter.js" async></script>
-<noscript><div class="statcounter"><a title="Web Analytics Made Easy -
-Statcounter" href="https://statcounter.com/" target="_blank"><img
-class="statcounter" src="https://c.statcounter.com/13340086/0/cea92861/1/"
-alt="Web Analytics Made Easy - Statcounter"
-referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
-<!-- End of Statcounter Code -->
-
-
-    
 </body>
 </html>
